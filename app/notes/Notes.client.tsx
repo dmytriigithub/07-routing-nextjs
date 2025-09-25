@@ -17,11 +17,13 @@ import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import { useDebouncedCallback } from "use-debounce";
 import toast, { Toaster } from "react-hot-toast";
-import Link from "next/link";
+import Modal from "@/components/Modal/Modal";
+import NoteForm from "@/components/NoteForm/NoteForm";
 
 const NoteClient = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [page, setPage] = useState<number>(1);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { data, isLoading, error, isSuccess } = useQuery<NotesHTTPResponse>({
     queryKey: ["notes", searchQuery, page],
@@ -32,8 +34,7 @@ const NoteClient = () => {
 
   useEffect(() => {
     if (isSuccess && data && data.notes.length === 0) {
-      alert("No notes found for your request.");
-      //   toast.error("No notes found for your request.");
+      toast.error("No notes found for your request.");
     }
   }, [isSuccess, data]);
 
@@ -63,6 +64,9 @@ const NoteClient = () => {
     mutation.mutate(id);
   };
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Some error..</p>;
   if (!data?.notes.length) return <p>No notes found</p>;
@@ -78,14 +82,19 @@ const NoteClient = () => {
             onPageChange={(newPage) => setPage(newPage)}
           />
         )}
-        <Link className={css.button} href="/modal">
+        <button className={css.button} onClick={openModal}>
           Create note +
-        </Link>
+        </button>
       </div>
       <Toaster />
 
       {data && data.notes.length > 0 && (
         <NoteList notes={data.notes} handleDeleteNote={handleDeleteNote} />
+      )}
+      {isModalOpen && (
+        <Modal onClose={closeModal}>
+          <NoteForm onClose={closeModal} />
+        </Modal>
       )}
     </div>
   );
