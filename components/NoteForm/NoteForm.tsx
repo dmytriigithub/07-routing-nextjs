@@ -5,6 +5,7 @@ import { useId } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createNote } from "@/lib/api";
 import toast from "react-hot-toast";
+import { Note } from "@/types/note";
 
 interface NoteFormProps {
   onClose: () => void;
@@ -38,7 +39,7 @@ export default function NoteForm({ onClose }: NoteFormProps) {
 
   const queryClient = useQueryClient();
 
-  const mutationCreate = useMutation({
+  const mutationCreate = useMutation<Note, Error, NoteFormValues>({
     mutationFn: (note: NoteFormValues) => createNote(note),
     onSuccess: () => {
       toast.success("Note created!");

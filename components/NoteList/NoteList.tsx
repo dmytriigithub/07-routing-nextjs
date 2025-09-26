@@ -3,13 +3,31 @@
 import { Note } from "@/types/note";
 import Link from "next/link";
 import css from "./NoteList.module.css";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteNote } from "@/lib/api";
+import toast from "react-hot-toast";
 
-type NoteListProps = {
+interface NoteListProps {
   notes: Note[];
-  handleDeleteNote: (id: string) => void;
-};
+}
 
-const NoteList = ({ notes, handleDeleteNote }: NoteListProps) => {
+const NoteList = ({ notes }: NoteListProps) => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<Note, Error, string>({
+    mutationFn: (id: string) => deleteNote(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      toast.success("Note deleted!");
+    },
+    onError: () => {
+      toast.error("Failed to delete note.");
+    },
+  });
+
+  const handleDeleteNote = (id: string) => {
+    mutation.mutate(id);
+  };
   if (!notes.length) {
     return <p>No notes available.</p>;
   }
@@ -24,8 +42,12 @@ const NoteList = ({ notes, handleDeleteNote }: NoteListProps) => {
             <Link className={css.link} href={`/notes/${id}`}>
               View details
             </Link>
-            <button className={css.button} onClick={() => handleDeleteNote(id)}>
-              Delete
+            <button
+              className={css.button}
+              onClick={() => handleDeleteNote(id)}
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? "Deleting..." : "Delete"}
             </button>
           </div>
         </li>

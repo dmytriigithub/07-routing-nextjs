@@ -1,5 +1,10 @@
+import { Note } from "@/types/note";
 import axios from "axios";
-import type { Note, NotesHTTPResponse } from "../types/note";
+
+export interface NotesHTTPResponse {
+  notes: Note[];
+  totalPages: number;
+}
 
 interface NoteHTTPRequest {
   title: string;
@@ -39,8 +44,8 @@ export async function fetchNoteById(id: string): Promise<Note> {
   return response.data;
 }
 
-export async function createNote(newNote: NoteHTTPRequest) {
-  const response = await axios.post(
+export async function createNote(newNote: NoteHTTPRequest): Promise<Note> {
+  const response = await axios.post<Note>(
     `https://notehub-public.goit.study/api/notes/`,
     newNote,
     {
@@ -52,8 +57,8 @@ export async function createNote(newNote: NoteHTTPRequest) {
   return response.data;
 }
 
-export async function deleteNote(noteId: string) {
-  const response = await axios.delete(
+export async function deleteNote(noteId: string): Promise<Note> {
+  const response = await axios.delete<Note>(
     `https://notehub-public.goit.study/api/notes/${noteId}`,
     {
       headers: {
@@ -61,6 +66,5 @@ export async function deleteNote(noteId: string) {
       },
     }
   );
-
   return response.data;
 }

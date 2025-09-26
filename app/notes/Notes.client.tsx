@@ -2,17 +2,11 @@
 
 import css from "./page.module.css";
 
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { deleteNote, fetchNotes } from "@/lib/api";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { fetchNotes, NotesHTTPResponse } from "@/lib/api";
 import { useEffect, useState } from "react";
 
 import NoteList from "@/components/NoteList/NoteList";
-import { NotesHTTPResponse } from "@/types/note";
 import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import { useDebouncedCallback } from "use-debounce";
@@ -47,22 +41,6 @@ const NoteClient = () => {
     },
     300
   );
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: (id: string) => deleteNote(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-      toast.success("Note deleted!");
-    },
-    onError: () => {
-      toast.error("Failed to delete note.");
-    },
-  });
-
-  const handleDeleteNote = (id: string) => {
-    mutation.mutate(id);
-  };
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -88,9 +66,7 @@ const NoteClient = () => {
       </div>
       <Toaster />
 
-      {data && data.notes.length > 0 && (
-        <NoteList notes={data.notes} handleDeleteNote={handleDeleteNote} />
-      )}
+      {data && data.notes.length > 0 && <NoteList notes={data.notes} />}
       {isModalOpen && (
         <Modal onClose={closeModal}>
           <NoteForm onClose={closeModal} />

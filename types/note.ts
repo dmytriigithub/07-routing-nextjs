@@ -8,8 +8,3 @@ export interface Note {
 }
 
 export type NoteTag = "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
-
-export interface NotesHTTPResponse {
-  notes: Note[];
-  totalPages: number;
-}
