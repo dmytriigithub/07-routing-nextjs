@@ -41,20 +41,21 @@ export default function NoteForm({ onClose }: NoteFormProps) {
 
   const mutationCreate = useMutation<Note, Error, NoteFormValues>({
     mutationFn: (note: NoteFormValues) => createNote(note),
-    onSuccess: () => {
-      toast.success("Note created!");
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-      onClose();
-    },
-    onError: () => toast.error("Failed to create note."),
   });
 
   const handleSubmit = (
     values: NoteFormValues,
     actions: FormikHelpers<NoteFormValues>
   ) => {
-    mutationCreate.mutate(values);
-    actions.resetForm();
+    mutationCreate.mutate(values, {
+      onSuccess: () => {
+        toast.success("Note created!");
+        queryClient.invalidateQueries({ queryKey: ["notes"] });
+        actions.resetForm(); // ✅ тільки після успіху
+        onClose();
+      },
+      onError: () => toast.error("Failed to create note."),
+    });
   };
 
   return (
