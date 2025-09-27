@@ -51,7 +51,7 @@ export default function NoteForm({ onClose }: NoteFormProps) {
       onSuccess: () => {
         toast.success("Note created!");
         queryClient.invalidateQueries({ queryKey: ["notes"] });
-        actions.resetForm(); // ✅ тільки після успіху
+        actions.resetForm();
         onClose();
       },
       onError: () => toast.error("Failed to create note."),
