@@ -1,6 +1,6 @@
 import Modal from "@/components/Modal/Modal";
 import { fetchNoteById } from "@/lib/api";
-import css from "../../../(public routes)/notes/[id]/NoteDetails.module.css";
+import css from "../../../notes/[id]/NoteDetails.module.css";
 
 type Props = {
   params: Promise<{ id: string }>;

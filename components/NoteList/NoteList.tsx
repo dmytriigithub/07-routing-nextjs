@@ -47,7 +47,7 @@ const NoteList = ({ notes }: NoteListProps) => {
               onClick={() => handleDeleteNote(id)}
               disabled={mutation.isPending}
             >
-              {mutation.isPending ? "Deleting..." : "Delete"}
+              Delete
             </button>
           </div>
         </li>
