@@ -14,15 +14,18 @@ interface NoteHTTPRequest {
 
 export async function fetchNotes(
   search: string,
-  page: number
+
+  page: number,
+  tag?: string
 ): Promise<NotesHTTPResponse> {
   const response = await axios.get<NotesHTTPResponse>(
-    `https://notehub-public.goit.study/api/notes/`,
+    `https://notehub-public.goit.study/api/notes`,
     {
       params: {
         search,
+        tag,
         page,
-        perPage: 12,
+        perPage: 9,
       },
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_NOTEHUB_TOKEN}`,

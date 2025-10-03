@@ -14,14 +14,18 @@ import toast, { Toaster } from "react-hot-toast";
 import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
 
-const NoteClient = () => {
+interface NoteClientProps {
+  filter: string | undefined;
+}
+
+const NoteClient = ({ filter }: NoteClientProps) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { data, isLoading, error, isSuccess } = useQuery<NotesHTTPResponse>({
-    queryKey: ["notes", searchQuery, page],
-    queryFn: () => fetchNotes(searchQuery, page),
+    queryKey: ["notes", searchQuery, filter, page],
+    queryFn: () => fetchNotes(searchQuery, page, filter),
     placeholderData: keepPreviousData,
     refetchOnMount: false,
   });
@@ -67,8 +71,9 @@ const NoteClient = () => {
       <Toaster />
 
       {data && data.notes.length > 0 && <NoteList notes={data.notes} />}
+
       {isModalOpen && (
-        <Modal onClose={closeModal}>
+        <Modal>
           <NoteForm onClose={closeModal} />
         </Modal>
       )}
