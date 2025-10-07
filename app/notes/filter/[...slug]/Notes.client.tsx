@@ -13,6 +13,7 @@ import { useDebouncedCallback } from "use-debounce";
 import toast, { Toaster } from "react-hot-toast";
 import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
+import { useRouter } from "next/navigation";
 
 interface NoteClientProps {
   filter: string | undefined;
@@ -29,6 +30,8 @@ const NoteClient = ({ filter }: NoteClientProps) => {
     placeholderData: keepPreviousData,
     refetchOnMount: false,
   });
+
+  const router = useRouter();
 
   useEffect(() => {
     if (isSuccess && data && data.notes.length === 0) {
@@ -47,7 +50,7 @@ const NoteClient = ({ filter }: NoteClientProps) => {
   );
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => router.back();
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Some error..</p>;
@@ -73,7 +76,7 @@ const NoteClient = ({ filter }: NoteClientProps) => {
       {data && data.notes.length > 0 && <NoteList notes={data.notes} />}
 
       {isModalOpen && (
-        <Modal>
+        <Modal onClose={closeModal}>
           <NoteForm onClose={closeModal} />
         </Modal>
       )}

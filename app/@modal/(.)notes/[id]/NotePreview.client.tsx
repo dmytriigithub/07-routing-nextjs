@@ -1,12 +1,14 @@
 "use client";
 import Modal from "@/components/Modal/Modal";
 import { fetchNoteById } from "@/lib/api";
-import css from "../../../notes/[id]/NoteDetails.module.css";
-import { useParams } from "next/navigation";
+import css from "./NotePreview.module.css";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
 const NotePreviewClient = () => {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const closeModal = () => router.back();
 
   const {
     data: note,
@@ -23,7 +25,10 @@ const NotePreviewClient = () => {
   if (error || !note) return <p>Some error..</p>;
 
   return (
-    <Modal>
+    <Modal onClose={closeModal}>
+      <button className={css.backBtn} onClick={closeModal}>
+        ← Back
+      </button>
       <div className={css.container}>
         <div className={css.item}>
           <div className={css.header}>

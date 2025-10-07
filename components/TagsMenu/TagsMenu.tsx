@@ -2,48 +2,50 @@
 
 import Link from "next/link";
 import css from "./TagsMenu.module.css";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { CATEGORIES } from "@/constants/categories";
 
 export default function TagsMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => setIsOpen(!isOpen);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const toggle = () => setIsOpen((prev) => !prev);
+  const closeMenu = () => setIsOpen(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        closeMenu();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
-    <div className={css.menuContainer}>
+    <div className={css.menuContainer} ref={menuRef}>
       <button className={css.menuButton} onClick={toggle}>
         Notes ▾
       </button>
       {isOpen && (
         <ul className={css.menuList}>
-          <li className={css.menuItem}>
-            <Link href={"/notes/filter/All"} className={css.menuLink}>
-              All notes
-            </Link>
-          </li>
-          <li className={css.menuItem}>
-            <Link href={"/notes/filter/Work"} className={css.menuLink}>
-              Work
-            </Link>
-          </li>
-          <li className={css.menuItem}>
-            <Link href={"/notes/filter/Personal"} className={css.menuLink}>
-              Personal
-            </Link>
-          </li>
-          <li className={css.menuItem}>
-            <Link href={"/notes/filter/Meeting"} className={css.menuLink}>
-              Meeting
-            </Link>
-          </li>
-          <li className={css.menuItem}>
-            <Link href={"/notes/filter/Shopping"} className={css.menuLink}>
-              Shopping
-            </Link>
-          </li>
-          <li className={css.menuItem}>
-            <Link href={"/notes/filter/Todo"} className={css.menuLink}>
-              Todo
-            </Link>
-          </li>
+          {CATEGORIES.map((category) => (
+            <li key={category} className={css.menuItem}>
+              <Link
+                href={`/notes/filter/${category}`}
+                className={css.menuLink}
+                onClick={closeMenu}
+              >
+                {category === "All" ? "All notes" : category}
+              </Link>
+            </li>
+          ))}
         </ul>
       )}
     </div>
