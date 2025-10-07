@@ -50,7 +50,10 @@ const NoteClient = ({ filter }: NoteClientProps) => {
   );
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => router.back();
+  const closeModal = () => {
+    router.push("/notes/filter/All");
+    setIsModalOpen(false);
+  };
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Some error..</p>;
